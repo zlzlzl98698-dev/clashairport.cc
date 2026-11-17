@@ -19,13 +19,18 @@ function walk(dir) {
 const distDir = path.resolve('dist');
 const indexFiles = walk(distDir);
 let aliasCount = 0;
+const canonicalUrls = [];
 
 indexFiles.forEach(indexPath => {
   const dir = path.dirname(indexPath);
-  if (dir === distDir) return; // Skip root index.html
+  if (dir === distDir) {
+    canonicalUrls.push('https://clashairport.cc/');
+    return;
+  }
 
   const relDir = path.relative(distDir, dir).replace(/\\/g, '/');
   const targetUrl = '/' + relDir + '/';
+  canonicalUrls.push('https://clashairport.cc' + targetUrl);
   const aliasPath = dir + '.html';
 
   // Only create alias if it doesn't already exist as a file or folder
@@ -51,10 +56,44 @@ indexFiles.forEach(indexPath => {
 
 console.log(`Generated ${aliasCount} .html redirect aliases in dist/`);
 
-// Ensure physical dist/sitemap.xml is available for search engine tools
+// Sort URLs deterministically
+canonicalUrls.sort();
+
+// Generate native sitemap-0.xml
+const now = new Date().toISOString();
+const urlElements = canonicalUrls.map(url => {
+  const priority = url === 'https://clashairport.cc/' ? '1.0' : '0.8';
+  return `  <url>
+    <loc>${url}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>${priority}</priority>
+  </url>`;
+}).join('\n');
+
+const sitemap0Content = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urlElements}
+</urlset>`;
+
+const sitemap0Path = path.join(distDir, 'sitemap-0.xml');
+fs.writeFileSync(sitemap0Path, sitemap0Content, 'utf-8');
+console.log(`Generated ${sitemap0Path} with ${canonicalUrls.length} URLs`);
+
+// Generate sitemap-index.xml
+const sitemapIndexContent = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://clashairport.cc/sitemap-0.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+</sitemapindex>`;
+
 const sitemapIndexPath = path.join(distDir, 'sitemap-index.xml');
+fs.writeFileSync(sitemapIndexPath, sitemapIndexContent, 'utf-8');
+console.log(`Generated ${sitemapIndexPath}`);
+
+// Generate sitemap.xml as identical to sitemap-index.xml for full compatibility
 const sitemapPath = path.join(distDir, 'sitemap.xml');
-if (fs.existsSync(sitemapIndexPath)) {
-  fs.copyFileSync(sitemapIndexPath, sitemapPath);
-  console.log('Created physical dist/sitemap.xml from sitemap-index.xml');
-}
+fs.writeFileSync(sitemapPath, sitemapIndexContent, 'utf-8');
+console.log(`Generated ${sitemapPath}`);
