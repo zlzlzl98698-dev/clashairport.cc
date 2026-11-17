@@ -1,0 +1,183 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/common/Breadcrumb.astro';
+
+const breadcrumbs = [
+  { title: '关于我们', href: '/about/' },
+];
+
+const teamMembers = [
+  {
+    role: '首席网络架构师',
+    name: 'Linus Chen',
+    exp: '前知名云计算厂商网络基础设施工程师，10年+ 跨国 BGP Anycast 与 SD-WAN 专线网络调优经验。',
+  },
+  {
+    role: '技术评测与协议分析师',
+    name: 'Alex Zhao',
+    exp: '深度精通 Shadowsocks 2022、VLESS Reality、TUIC 与 Hysteria 2 协议内核开发及防封锁逆向分析。',
+  },
+  {
+    role: '出海内容系统主编',
+    name: 'Kite Wang',
+    exp: '专注全球流媒体（Netflix/Disney+）原生 IP 池解锁监测及跨境网络合规指南撰写。',
+  },
+];
+
+const labNodes = [
+  { city: '中国上海 (本地主测点)', isp: '中国电信 1000M FTTH / 中国联通 500M 宽带', duty: '端到端晚高峰压测与本地客户端体验模拟' },
+  { city: '中国广州 (华南测试点)', isp: '中国移动 1000M 家庭宽带', duty: '华南多线出国接入质量与晚高峰丢包拨测' },
+  { city: '中国香港 (探针节点)', isp: 'Equinix HK2 独立机柜 (BGP 10G 上联)', duty: 'IEPL/IPLC 跨境物理专线出口延迟与抖动监控' },
+  { city: '日本东京 (探针节点)', isp: 'Equinix TY2 节点', duty: '亚太主流节点连通率与 4K 流媒体解锁监测' },
+  { city: '美国洛杉矶 (探针节点)', isp: 'CoreSite LA2 节点', duty: '北美骨干网回程路由与 ChatGPT 原生 API 解锁核验' },
+];
+---
+
+<BaseLayout
+  title="关于我们 - clash机机网络工具与专线机场评测实验室"
+  description="了解clash机机 (clashairport.cc) 的媒体背景、独立评测原则、网络可观测性实验室设备、实测网络环境及非赞助公正性准则。"
+  canonical="https://clashairport.cc/about/"
+  pageType="about"
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Hero Header -->
+    <header class="card-base p-8 sm:p-12 bg-gradient-to-br from-white via-surface-subtle to-brand-50/50 border-surface-border mb-12 shadow-sm text-center">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-brand-600 text-white flex items-center justify-center shadow-md shadow-brand-500/20 mb-5">
+        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 2L11 13"></path>
+          <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+        </svg>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-black text-ink-title tracking-tight mb-4">
+        关于 clash机机 (clashairport.cc)
+      </h1>
+      <p class="text-base text-ink-body max-w-2xl mx-auto leading-relaxed">
+        一个立足数据可观测性、坚持客观真实测速、拒绝虚假营销的中文网络代理工具与专线机场专业评测媒体。
+      </p>
+    </header>
+
+    <div class="space-y-12">
+      <!-- 1. 创立初心与媒体使命 -->
+      <section class="card-base p-6 sm:p-8 bg-white border-surface-border">
+        <h2 class="text-xl font-bold text-ink-title mb-4 flex items-center gap-2">
+          <span>🎯</span>
+          <span>创立初心与媒体使命</span>
+        </h2>
+        <div class="article-prose text-sm text-ink-body space-y-3 leading-relaxed">
+          <p>
+            在中文网络代理与出海网络加速领域，长期存在严重的信息不对称：大量营销号使用盗图、千篇一律的夸张话术、虚构测速截图，甚至为劣质跑路梯子诱导年付推广。
+          </p>
+          <p>
+            <strong>clash机机 (clashairport.cc)</strong> 创立于 2026 年初，旨在建立一个具备**真实测试环境、透明测试数据、客观优缺点剖析与严格防跑路风控**的独立评测阵地。我们通过自建多运营商网络环境与海外回程测速探针，让每一条专线机场推荐都有据可查，让每一个客户端配置教程都经过实机验证。
+          </p>
+        </div>
+      </section>
+
+      <!-- 2. 网络评测实验室与物理基础设施 -->
+      <section class="card-base p-6 sm:p-8 bg-white border-surface-border">
+        <h2 class="text-xl font-bold text-ink-title mb-4 flex items-center gap-2">
+          <span>🔬</span>
+          <span>网络可观测性实验室基础设施</span>
+        </h2>
+        <p class="text-xs text-ink-muted mb-6 leading-relaxed">
+          本站所有评测报告中的测速柱状图、晚高峰延迟数据、协议握手耗时及流媒体解锁状态，均由以下物理实验室网络节点定时轮询拔测产出：
+        </p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-surface-subtle text-ink-title border-b border-surface-border">
+                <th class="py-3 px-4 font-bold">测试节点区域</th>
+                <th class="py-3 px-4 font-bold">接入网络环境 / 带宽规格</th>
+                <th class="py-3 px-4 font-bold">承担拨测任务</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-border">
+              {labNodes.map((n) => (
+                <tr class="hover:bg-brand-50/20">
+                  <td class="py-3 px-4 font-bold text-ink-title">{n.city}</td>
+                  <td class="py-3 px-4 font-mono text-brand-700">{n.isp}</td>
+                  <td class="py-3 px-4 text-ink-body">{n.duty}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 3. 独立性与商业合作透明度规范 -->
+      <section class="card-base p-6 sm:p-8 bg-white border-surface-border">
+        <h2 class="text-xl font-bold text-ink-title mb-4 flex items-center gap-2">
+          <span>⚖️</span>
+          <span>独立性与商业合作透明度准则 (Editorial Ethics)</span>
+        </h2>
+        <div class="space-y-4 text-xs sm:text-sm text-ink-body leading-relaxed">
+          <div class="p-4 rounded-xl bg-surface-subtle border border-surface-border space-y-2">
+            <h3 class="font-bold text-ink-title">1. 严禁付费购买评测结论</h3>
+            <p>
+              我们绝不接受任何要求“必须给出好评”、“屏蔽真实缺点”或“篡改测速数据”的商业赞助。即使是商业合作推广品牌，若在实际晚高峰拔测中出现大面积丢包或断连，本站将如实记录并在报告中明确标黄示警。
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-surface-subtle border border-surface-border space-y-2">
+            <h3 class="font-bold text-ink-title">2. 全合规外链与透明返佣标识</h3>
+            <p>
+              为了维持实验室服务器与探针节点的长期运维开销，本站部分品牌直达链接包含推广返佣参数。我们严格执行国际通用技术 SEO 标准，为所有商业推广外链包裹 <code>rel="nofollow sponsored noopener"</code>，确保不传递非自然 PageRank，同时绝不增加用户的实际购买成本。
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-surface-subtle border border-surface-border space-y-2">
+            <h3 class="font-bold text-ink-title">3. 坚守“月付为王”的资金避险原则</h3>
+            <p>
+              无论是推荐任何品牌，我们始终在文章中高亮提示用户优先选用月付或季付周期，严格警惕大额年付折扣陷阱，将用户资金跑路风险降至最低。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 实验室团队简介 -->
+      <section class="card-base p-6 sm:p-8 bg-white border-surface-border">
+        <h2 class="text-xl font-bold text-ink-title mb-4 flex items-center gap-2">
+          <span>👥</span>
+          <span>评测实验室核心成员</span>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {teamMembers.map((m) => (
+            <div class="card-base p-5 bg-surface-subtle/60 border-surface-border flex flex-col justify-between">
+              <div>
+                <span class="text-[11px] font-bold text-brand-600 block mb-1">{m.role}</span>
+                <h3 class="text-base font-bold text-ink-title mb-2">{m.name}</h3>
+                <p class="text-xs text-ink-body leading-relaxed">{m.exp}</p>
+              </div>
+              <div class="pt-4 mt-4 border-t border-surface-border text-[11px] text-ink-muted">
+                认证评测专家 · 2026
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- 5. 联系方式与勘误反馈 -->
+      <section class="card-base p-6 sm:p-8 bg-gradient-to-r from-brand-600 to-indigo-700 text-white rounded-2xl shadow-md">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div>
+            <h2 class="text-xl font-bold mb-2">联系实验室与数据纠错</h2>
+            <p class="text-xs text-blue-100 leading-relaxed max-w-xl">
+              如果您发现某家机场品牌存在线路下线、价格调整、跑路预警或测速偏差，欢迎通过电子邮件联系我们。我们将在 24 小时内启动真机复测与数据更新。
+            </p>
+          </div>
+          <div class="flex-shrink-0">
+            <a
+              href="mailto:contact@clashairport.cc"
+              class="px-6 py-3 rounded-xl bg-white text-brand-700 font-bold text-xs shadow-lg hover:bg-brand-50 transition-all inline-block"
+            >
+              contact@clashairport.cc
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

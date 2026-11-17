@@ -1,0 +1,75 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  url: string;
+  coverImage?: string;
+  category?: string;
+  date?: string;
+  readingTimeMinutes?: number;
+  author?: string;
+}
+
+const {
+  title,
+  description,
+  url,
+  coverImage = '/images/covers/404676435-4ea1cc7d-8515-45a9-b656-44bd27b600da.jpg',
+  category = '深度测评',
+  date = '2026-11-17',
+  readingTimeMinutes = 5,
+  author = 'clash机机评测室',
+} = Astro.props;
+---
+
+<article class="card-base group flex flex-col h-full overflow-hidden bg-white hover:border-brand-300">
+  <!-- Card Image Container -->
+  <a href={url} class="relative block overflow-hidden aspect-[16/10] bg-surface-subtle" tabindex="-1">
+    <img
+      src={coverImage}
+      alt={title}
+      class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+      loading="lazy"
+    />
+    <div class="absolute top-3 left-3 flex items-center gap-1.5">
+      <span class="px-2.5 py-1 text-[11px] font-bold rounded-md bg-white/95 text-brand-700 shadow-sm backdrop-blur-sm border border-brand-100">
+        {category}
+      </span>
+    </div>
+    <div class="absolute bottom-2.5 right-3">
+      <span class="px-2 py-0.5 text-[10px] font-medium rounded bg-black/60 text-white backdrop-blur-sm">
+        {readingTimeMinutes} 分钟精读
+      </span>
+    </div>
+  </a>
+
+  <!-- Card Content -->
+  <div class="p-5 flex flex-col flex-grow">
+    <div class="flex items-center gap-2 text-xs text-ink-muted mb-2">
+      <time datetime={date}>{date}</time>
+      <span>•</span>
+      <span>{author}</span>
+    </div>
+
+    <h3 class="text-base font-bold text-ink-title leading-snug group-hover:text-brand-600 transition-colors line-clamp-2 mb-2">
+      <a href={url}>
+        {title}
+      </a>
+    </h3>
+
+    <p class="text-xs text-ink-muted line-clamp-3 leading-relaxed mb-4 flex-grow">
+      {description}
+    </p>
+
+    <!-- Card Action -->
+    <div class="pt-3 border-t border-surface-border flex items-center justify-between mt-auto">
+      <span class="text-xs font-semibold text-brand-600 group-hover:text-brand-700 inline-flex items-center gap-1">
+        查看全文
+        <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </span>
+      <span class="text-[11px] text-ink-muted">独家实测</span>
+    </div>
+  </div>
+</article>

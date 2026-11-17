@@ -1,0 +1,74 @@
+---
+import Header from '../components/common/Header.astro';
+import Footer from '../components/common/Footer.astro';
+import SEOHead from '../components/common/SEOHead.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  pageType?: 'article' | 'collection' | 'website' | 'about';
+  publishDate?: string;
+  updateDate?: string;
+  author?: string;
+  articleSection?: string;
+  noindex?: boolean;
+  faqs?: { question: string; answer: string }[];
+}
+
+const props = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="zh-CN" class="scroll-smooth">
+  <head>
+    <SEOHead {...props} />
+  </head>
+  <body class="min-h-screen flex flex-col bg-white text-ink-body selection:bg-brand-100 selection:text-brand-900">
+    <!-- Top Site Navigation Header -->
+    <Header currentPath={currentPath} />
+
+    <!-- Main Content Area -->
+    <main class="flex-grow">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <Footer />
+
+    <!-- Back to top button -->
+    <button
+      id="back-to-top"
+      type="button"
+      aria-label="返回页面顶部"
+      class="fixed bottom-6 right-6 p-3 rounded-full bg-white text-ink-title border border-surface-border shadow-elevated opacity-0 pointer-events-none transition-all duration-300 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-300 z-40"
+    >
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+      </svg>
+    </button>
+
+    <script>
+      // Scroll to top handler
+      const bttBtn = document.getElementById('back-to-top');
+      if (bttBtn) {
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 400) {
+            bttBtn.classList.remove('opacity-0', 'pointer-events-none');
+            bttBtn.classList.add('opacity-100', 'pointer-events-auto');
+          } else {
+            bttBtn.classList.remove('opacity-100', 'pointer-events-auto');
+            bttBtn.classList.add('opacity-0', 'pointer-events-none');
+          }
+        });
+        bttBtn.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+    </script>
+  </body>
+</html>

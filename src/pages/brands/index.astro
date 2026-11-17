@@ -1,0 +1,250 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BrandCard from '../../components/cards/BrandCard.astro';
+import Breadcrumb from '../../components/common/Breadcrumb.astro';
+import { BRANDS } from '../../data/brands';
+
+const breadcrumbs = [
+  { title: '品牌数据库', href: '/brands/' },
+];
+
+const totalBrands = BRANDS.length;
+---
+
+<BaseLayout
+  title="机场品牌数据库 (41家实测收录) - 专线/价格/流媒体/客户端多维筛选 - clash机机"
+  description="收录41家中文主流机场与VPN品牌。提供按物理专线类型(IEPL/IPLC)、起步价格档位、ChatGPT与流媒体解锁、客户端支持的多维度即时检索与真实拔测参数对比。"
+  canonical="https://clashairport.cc/brands/"
+  pageType="collection"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Page Header -->
+    <header class="mb-8">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+          全量收录数据库
+        </span>
+        <span class="text-xs text-ink-muted">共收录 {totalBrands} 家独立品牌 • 数据核验于 2026 年 11 月</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-ink-title tracking-tight mb-3">
+        41 家机场品牌全景检索数据库
+      </h1>
+
+      <p class="text-sm sm:text-base text-ink-muted leading-relaxed max-w-3xl">
+        本库所有品牌均基于物理专线拓扑、晚高峰千兆带宽拔测、真实套餐资费与客户端兼容性独立审验。严禁虚报价格与虚标倍率，支持按线路、价格、AI 流媒体及协议进行即时筛选。
+      </p>
+    </header>
+
+    <!-- Filter Control Bar -->
+    <div class="card-base p-6 bg-surface-subtle border-surface-border mb-8 space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+        <!-- Search box -->
+        <div class="md:col-span-5 relative">
+          <input
+            type="text"
+            id="brand-search-input"
+            placeholder="按品牌名称、英文别名或协议搜索..."
+            class="w-full pl-10 pr-4 py-2.5 text-xs bg-white border border-surface-border rounded-xl shadow-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+          />
+          <svg class="w-4 h-4 text-ink-muted absolute left-3.5 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+
+        <!-- Line filter -->
+        <div class="md:col-span-3">
+          <select
+            id="line-filter"
+            class="w-full py-2.5 px-3 text-xs bg-white border border-surface-border rounded-xl shadow-sm focus:outline-none focus:border-brand-500"
+          >
+            <option value="all">线路架构: 全部</option>
+            <option value="IEPL">仅显示 IEPL 专线</option>
+            <option value="IPLC">仅显示 IPLC 专线</option>
+            <option value="BGP">BGP 隧道中转</option>
+          </select>
+        </div>
+
+        <!-- Price filter -->
+        <div class="md:col-span-2">
+          <select
+            id="price-filter"
+            class="w-full py-2.5 px-3 text-xs bg-white border border-surface-border rounded-xl shadow-sm focus:outline-none focus:border-brand-500"
+          >
+            <option value="all">起步价格: 全部</option>
+            <option value="sub10">¥10元/月以下 (入门)</option>
+            <option value="10to25">¥10 - 25元/月 (主流)</option>
+            <option value="above25">¥25元/月以上 (高端)</option>
+          </select>
+        </div>
+
+        <!-- Reset & Count -->
+        <div class="md:col-span-2 flex items-center justify-between md:justify-end gap-3 text-xs font-mono">
+          <span id="brands-count-badge" class="font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded">
+            {totalBrands} / {totalBrands}
+          </span>
+          <button
+            id="reset-filter-btn"
+            type="button"
+            class="text-ink-muted hover:text-brand-600 underline"
+          >
+            重置
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Filter Pills -->
+      <div class="flex items-center gap-2 pt-2 border-t border-surface-border flex-wrap text-xs">
+        <span class="text-ink-muted">热门标签快捷筛选:</span>
+        <button type="button" class="quick-tag px-2.5 py-1 rounded-md bg-white border border-surface-border text-ink-body hover:border-brand-300" data-filter-tag="光速云">
+          ★ 主推光速云
+        </button>
+        <button type="button" class="quick-tag px-2.5 py-1 rounded-md bg-white border border-surface-border text-ink-body hover:border-brand-300" data-filter-tag="IEPL">
+          IEPL专线
+        </button>
+        <button type="button" class="quick-tag px-2.5 py-1 rounded-md bg-white border border-surface-border text-ink-body hover:border-brand-300" data-filter-tag="VLESS">
+          VLESS协议
+        </button>
+        <button type="button" class="quick-tag px-2.5 py-1 rounded-md bg-white border border-surface-border text-ink-body hover:border-brand-300" data-filter-tag="自研客户端">
+          提供自研客户端
+        </button>
+        <button type="button" class="quick-tag px-2.5 py-1 rounded-md bg-white border border-surface-border text-ink-body hover:border-brand-300" data-filter-tag="ChatGPT">
+          ChatGPT 原生支持
+        </button>
+      </div>
+    </div>
+
+    <!-- Brands Grid Container -->
+    <div id="brands-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {BRANDS.map((brand) => (
+        <div
+          class="brand-card-item"
+          data-name={brand.name.toLowerCase()}
+          data-name-en={brand.nameEn.toLowerCase()}
+          data-aliases={brand.aliases.join(',').toLowerCase()}
+          data-lines={brand.lines.join(',')}
+          data-protocols={brand.protocols.join(',')}
+          data-clients={brand.clients.join(',')}
+          data-price={brand.priceStartMonthly}
+          data-summary={brand.summary.toLowerCase()}
+        >
+          <BrandCard brand={brand} />
+        </div>
+      ))}
+    </div>
+
+    <!-- Empty State Message -->
+    <div id="brands-empty" class="hidden text-center py-16 card-base bg-white border-surface-border mt-8">
+      <div class="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-2xl mb-3">
+        🔍
+      </div>
+      <h3 class="text-base font-bold text-ink-title">未找到匹配的机场品牌</h3>
+      <p class="text-xs text-ink-muted mt-1 max-w-sm mx-auto">
+        没有找到符合当前筛选条件的品牌。请尝试放宽筛选条件或点击下方重置按钮。
+      </p>
+      <button
+        id="empty-reset-btn"
+        type="button"
+        class="mt-4 px-4 py-2 bg-brand-600 text-white rounded-lg text-xs font-bold shadow-sm"
+      >
+        重置全部筛选条件
+      </button>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Pure lightweight client-side live filter
+  const searchInput = document.getElementById('brand-search-input') as HTMLInputElement;
+  const lineFilter = document.getElementById('line-filter') as HTMLSelectElement;
+  const priceFilter = document.getElementById('price-filter') as HTMLSelectElement;
+  const resetBtn = document.getElementById('reset-filter-btn');
+  const emptyResetBtn = document.getElementById('empty-reset-btn');
+  const countBadge = document.getElementById('brands-count-badge');
+  const emptyState = document.getElementById('brands-empty');
+  const cardItems = document.querySelectorAll('.brand-card-item') as NodeListOf<HTMLElement>;
+  const quickTags = document.querySelectorAll('.quick-tag') as NodeListOf<HTMLButtonElement>;
+
+  function applyFilters() {
+    const query = (searchInput?.value || '').trim().toLowerCase();
+    const lineVal = lineFilter?.value || 'all';
+    const priceVal = priceFilter?.value || 'all';
+
+    let visibleCount = 0;
+
+    cardItems.forEach((card) => {
+      const name = card.dataset.name || '';
+      const nameEn = card.dataset.nameEn || '';
+      const aliases = card.dataset.aliases || '';
+      const lines = card.dataset.lines || '';
+      const protocols = card.dataset.protocols || '';
+      const clients = card.dataset.clients || '';
+      const summary = card.dataset.summary || '';
+      const price = parseFloat(card.dataset.price || '0');
+
+      let matchesSearch = true;
+      if (query) {
+        matchesSearch = name.includes(query) || nameEn.includes(query) || aliases.includes(query) || protocols.toLowerCase().includes(query) || clients.toLowerCase().includes(query) || summary.includes(query);
+      }
+
+      let matchesLine = true;
+      if (lineVal !== 'all') {
+        matchesLine = lines.includes(lineVal);
+      }
+
+      let matchesPrice = true;
+      if (priceVal === 'sub10') {
+        matchesPrice = price <= 10;
+      } else if (priceVal === '10to25') {
+        matchesPrice = price > 10 && price <= 25;
+      } else if (priceVal === 'above25') {
+        matchesPrice = price > 25;
+      }
+
+      if (matchesSearch && matchesLine && matchesPrice) {
+        card.style.display = '';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    if (countBadge) {
+      countBadge.textContent = `${visibleCount} / ${cardItems.length}`;
+    }
+
+    if (emptyState) {
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+  }
+
+  searchInput?.addEventListener('input', applyFilters);
+  lineFilter?.addEventListener('change', applyFilters);
+  priceFilter?.addEventListener('change', applyFilters);
+
+  function resetAll() {
+    if (searchInput) searchInput.value = '';
+    if (lineFilter) lineFilter.value = 'all';
+    if (priceFilter) priceFilter.value = 'all';
+    applyFilters();
+  }
+
+  resetBtn?.addEventListener('click', resetAll);
+  emptyResetBtn?.addEventListener('click', resetAll);
+
+  quickTags.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.filterTag || '';
+      if (searchInput) {
+        searchInput.value = tag;
+        applyFilters();
+      }
+    });
+  });
+</script>

@@ -1,0 +1,80 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  url: string;
+  coverImage?: string;
+  category?: string;
+  date?: string;
+  readingTimeMinutes?: number;
+  badge?: string;
+}
+
+const {
+  title,
+  description,
+  url,
+  coverImage = '/images/covers/404676435-4ea1cc7d-8515-45a9-b656-44bd27b600da.jpg',
+  category = '年度重磅',
+  date = '2026-11-17',
+  readingTimeMinutes = 8,
+  badge = '编辑推荐',
+} = Astro.props;
+---
+
+<div class="card-base group grid grid-cols-1 lg:grid-cols-12 overflow-hidden bg-white hover:border-brand-300">
+  <!-- Image Column -->
+  <div class="lg:col-span-7 relative overflow-hidden bg-slate-900 aspect-[16/10] lg:aspect-auto">
+    <a href={url} class="block w-full h-full">
+      <img
+        src={coverImage}
+        alt={title}
+        class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out min-h-[260px] lg:min-h-[380px]"
+        loading="eager"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent lg:hidden"></div>
+      <div class="absolute top-4 left-4 flex gap-2">
+        <span class="px-3 py-1 text-xs font-bold rounded-lg bg-brand-600 text-white shadow-md">
+          {badge}
+        </span>
+        <span class="px-3 py-1 text-xs font-semibold rounded-lg bg-white/90 text-ink-title backdrop-blur-sm">
+          {category}
+        </span>
+      </div>
+    </a>
+  </div>
+
+  <!-- Content Column -->
+  <div class="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between">
+    <div>
+      <div class="flex items-center gap-2 text-xs text-ink-muted mb-3">
+        <time datetime={date}>{date}</time>
+        <span>•</span>
+        <span>{readingTimeMinutes} 分钟权威长文</span>
+        <span>•</span>
+        <span class="text-emerald-600 font-medium">实验室实测</span>
+      </div>
+
+      <h2 class="text-xl sm:text-2xl font-bold text-ink-title leading-tight mb-4 group-hover:text-brand-600 transition-colors">
+        <a href={url}>
+          {title}
+        </a>
+      </h2>
+
+      <p class="text-sm text-ink-body leading-relaxed mb-6 line-clamp-4">
+        {description}
+      </p>
+    </div>
+
+    <div class="pt-4 border-t border-surface-border flex items-center justify-between">
+      <a
+        href={url}
+        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all shadow-sm shadow-brand-500/20 group-hover:gap-3 whitespace-nowrap flex-shrink-0"
+      >
+        <span>阅读深度评测</span>
+        <span>→</span>
+      </a>
+      <span class="text-xs text-ink-muted">含实测拓扑与测速图</span>
+    </div>
+  </div>
+</div>

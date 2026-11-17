@@ -1,0 +1,98 @@
+---
+import type { PlanItem } from '../../data/brands';
+
+interface Props {
+  plans: PlanItem[];
+  brandName: string;
+  affUrl: string;
+  affCode?: string;
+}
+
+const { plans, brandName, affUrl, affCode } = Astro.props;
+---
+
+<div class="my-8">
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <h3 class="text-lg font-bold text-ink-title">💰 {brandName} 核心套餐与资费一览</h3>
+      <p class="text-xs text-ink-muted">价格与流量信息均经实验室实盘比对核实</p>
+    </div>
+    {affCode && (
+      <div class="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-lg text-xs font-mono">
+        <span>专属优惠码:</span>
+        <strong class="font-bold">{affCode}</strong>
+      </div>
+    )}
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {plans.map((plan, idx) => {
+      const isPopular = idx === 0 || plan.name.includes('轻量') || plan.name.includes('极速');
+      return (
+        <div class={`card-base p-5 flex flex-col justify-between bg-white relative ${
+          isPopular ? 'border-brand-500 ring-1 ring-brand-500 shadow-card-hover' : ''
+        }`}>
+          {isPopular && (
+            <span class="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-600 text-white shadow-sm">
+              热销推荐
+            </span>
+          )}
+
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-sm font-bold text-ink-title">{plan.name}</h4>
+              <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-surface-subtle text-ink-muted border border-surface-border">
+                {plan.period}
+              </span>
+            </div>
+
+            <div class="mb-3">
+              <span class="text-2xl font-black text-brand-600">{plan.price}</span>
+              {plan.monthlyEquivalent && (
+                <span class="text-xs text-ink-muted ml-1.5">
+                  (折合 ¥{plan.monthlyEquivalent}/月)
+                </span>
+              )}
+            </div>
+
+            <div class="bg-surface-subtle rounded-lg p-2.5 mb-4 text-xs space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-ink-muted">包含流量:</span>
+                <span class="font-bold text-ink-title font-mono">{plan.bandwidth}</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-ink-muted">重置周期:</span>
+                <span class="text-ink-body">{plan.trafficType === 'monthly' ? '每月重置' : '一次性不过期'}</span>
+              </div>
+            </div>
+
+            {plan.note && (
+              <p class="text-xs text-ink-muted leading-relaxed mb-4">
+                {plan.note}
+              </p>
+            )}
+          </div>
+
+          {affUrl ? (
+            <a
+              href={affUrl}
+              target="_blank"
+              rel="nofollow sponsored noopener"
+              class={`w-full text-center py-2 px-4 rounded-lg text-xs font-bold transition-all ${
+                isPopular
+                  ? 'bg-brand-600 hover:bg-brand-700 text-white shadow-sm'
+                  : 'bg-surface-subtle hover:bg-surface-hover text-ink-title border border-surface-border'
+              }`}
+            >
+              选购该套餐 →
+            </a>
+          ) : (
+            <span class="w-full text-center py-2 px-4 rounded-lg text-xs font-medium bg-surface-subtle text-ink-muted border border-surface-border cursor-not-allowed">
+              套餐暂未开放选购
+            </span>
+          )}
+        </div>
+      );
+    })}
+  </div>
+</div>

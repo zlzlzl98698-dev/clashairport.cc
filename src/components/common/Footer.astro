@@ -1,0 +1,94 @@
+---
+import { MAIN_NAVIGATION } from '../../data/navigation';
+import { SITE } from '../../data/site';
+---
+
+<footer class="bg-surface-subtle border-t border-surface-border mt-20 transition-colors">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
+      
+      <!-- Brand column (spans 2 on large screens) -->
+      <div class="col-span-2">
+        <a href="/" class="flex items-center gap-2.5 mb-4 group">
+          <div class="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 2L11 13"></path>
+              <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+            </svg>
+          </div>
+          <span class="text-xl font-bold tracking-tight text-ink-title">clash机机</span>
+        </a>
+        <p class="text-xs text-ink-muted leading-relaxed mb-4 max-w-sm">
+          中文网络代理工具专业评测媒体。立足网络可观测性实验室，提供 41+ 专线机场横评、晚高峰测速丢包报告、流媒体与 ChatGPT 原生解锁矩阵及 Clash Verge 客户端配置教程。
+        </p>
+        <div class="flex items-center gap-2 flex-wrap">
+          <a href="/brands/" class="inline-flex items-center gap-1 text-xs font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 px-2.5 py-1 rounded-md border border-brand-200">
+            <span>41 家品牌库</span>
+            <span>→</span>
+          </a>
+          <a href="/about/" class="inline-flex items-center gap-1 text-xs font-medium text-ink-body hover:text-brand-600 bg-white px-2.5 py-1 rounded-md border border-surface-border">
+            <span>关于实验室</span>
+          </a>
+          <a href="/resources/methodology/" class="inline-flex items-center gap-1 text-xs font-medium text-ink-body hover:text-brand-600 bg-white px-2.5 py-1 rounded-md border border-surface-border">
+            <span>评测白皮书</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Navigation Columns -->
+      {MAIN_NAVIGATION.map((section) => (
+        <div class="col-span-1">
+          <a href={section.href} class="text-xs font-bold text-ink-title uppercase tracking-wider block mb-3 hover:text-brand-600 transition-colors">
+            {section.title}
+          </a>
+          <ul class="space-y-2">
+            {section.subItems.slice(0, 5).map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="text-xs text-ink-muted hover:text-brand-600 transition-colors block"
+                >
+                  {item.title}
+                </a>
+              </li>
+            ))}
+            <li>
+              <a href={section.href} class="text-[11px] font-semibold text-brand-600 hover:underline">
+                全部 7 个专题 »
+              </a>
+            </li>
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <!-- Disclosure & Disclaimer Box -->
+    <div class="border-t border-surface-border pt-8 mb-8 space-y-3">
+      <div class="p-4 rounded-xl bg-white border border-surface-border text-xs text-ink-muted space-y-2">
+        <p>
+          <strong class="text-ink-body font-semibold">商业合作与引介透明度披露 (Affiliate Disclosure)：</strong>
+          本站部分链接包含服务商商业推广代码（使用合规 <code>rel="nofollow sponsored noopener"</code> 标记）。本站测评结果立足于自建网络监测节点对物理专线延迟、晚高峰丢包、流媒体解锁及资费性价比的客观实测，商业引介不改变独立评测结论。
+        </p>
+        <p>
+          <strong class="text-ink-body font-semibold">法律与合规声明：</strong>
+          请严格遵守您所在司法管辖区关于国际联网与网络安全的法律法规。本站所刊载的技术文章、开源客户端配置与测速数据仅供学术交流、企业跨境业务合规加速与技术实验研究使用，严禁利用任何工具从事违法犯罪活动。
+        </p>
+      </div>
+    </div>
+
+    <!-- Bottom line -->
+    <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-ink-muted gap-4">
+      <div class="flex items-center gap-4 flex-wrap">
+        <span>© {new Date().getFullYear()} clash机机 (clashairport.cc). 版权所有。</span>
+        <a href="/about/" class="hover:text-brand-600 font-semibold text-ink-body">关于我们 (About Us)</a>
+        <a href="/resources/methodology/" class="hover:text-brand-600 font-semibold text-ink-body">评测方法论 (Methodology)</a>
+        <a href="/sitemap-index.xml" class="hover:text-brand-600 underline" target="_blank">网站地图 (Sitemap)</a>
+        <a href="/robots.txt" class="hover:text-brand-600 underline" target="_blank">Robots.txt</a>
+        <a href="/brands/lightspeed/" class="hover:text-brand-600 font-semibold text-brand-600">光速云特惠</a>
+      </div>
+      <div>
+        <span>技术架构：Astro 静态引擎 + Pagefind 静态搜索 + Apache 部署</span>
+      </div>
+    </div>
+  </div>
+</footer>

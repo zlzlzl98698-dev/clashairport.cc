@@ -1,0 +1,178 @@
+---
+import { SITE } from '../../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  pageType?: 'article' | 'collection' | 'website' | 'about';
+  publishDate?: string;
+  updateDate?: string;
+  author?: string;
+  articleSection?: string;
+  noindex?: boolean;
+  faqs?: { question: string; answer: string }[];
+}
+
+const {
+  title = SITE.title,
+  description = SITE.description,
+  canonical,
+  ogImage = SITE.ogImage,
+  ogType = 'website',
+  pageType = 'website',
+  publishDate,
+  updateDate,
+  author = SITE.author,
+  articleSection,
+  noindex = false,
+  faqs = [],
+} = Astro.props;
+
+const siteUrl = SITE.url;
+const currentUrl = canonical || new URL(Astro.url.pathname, siteUrl).href;
+const formattedOgImage = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`;
+
+const baseSchema: Record<string, any>[] = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE.name,
+    url: siteUrl,
+    description: SITE.description,
+    inLanguage: 'zh-CN',
+    publisher: {
+      '@type': 'Organization',
+      name: SITE.name,
+      url: siteUrl,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteUrl}/favicon.svg`,
+      },
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: SITE.name,
+    url: siteUrl,
+    logo: `${siteUrl}/favicon.svg`,
+    sameAs: ['https://clashairport.cc'],
+  },
+];
+
+if (pageType === 'collection') {
+  baseSchema.push({
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: title,
+    description: description,
+    url: currentUrl,
+    inLanguage: 'zh-CN',
+    publisher: {
+      '@type': 'Organization',
+      name: SITE.name,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteUrl}/favicon.svg`,
+      },
+    },
+  });
+} else if (pageType === 'about') {
+  baseSchema.push({
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: title,
+    description: description,
+    url: currentUrl,
+    inLanguage: 'zh-CN',
+    mainEntity: {
+      '@type': 'Organization',
+      name: SITE.name,
+      url: siteUrl,
+      logo: `${siteUrl}/favicon.svg`,
+    },
+  });
+} else if (ogType === 'article') {
+  baseSchema.push({
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description: description,
+    image: [formattedOgImage],
+    datePublished: publishDate || '2026-11-17T08:00:00+08:00',
+    dateModified: updateDate || '2026-11-17T18:00:00+08:00',
+    author: {
+      '@type': 'Person',
+      name: author,
+      url: siteUrl,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE.name,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteUrl}/favicon.svg`,
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': currentUrl,
+    },
+    ...(articleSection ? { articleSection } : {}),
+  });
+}
+
+if (faqs && faqs.length > 0) {
+  baseSchema.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.answer,
+      },
+    })),
+  });
+}
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={currentUrl} />
+
+<!-- Search Engine Site Verification (Google / Bing / Baidu / Shenma) -->
+{SITE.verification?.google && <meta name="google-site-verification" content={SITE.verification.google} />}
+{SITE.verification?.bing && <meta name="msvalidate.01" content={SITE.verification.bing} />}
+{SITE.verification?.baidu && <meta name="baidu-site-verification" content={SITE.verification.baidu} />}
+{SITE.verification?.shenma && <meta name="shenma-site-verification" content={SITE.verification.shenma} />}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={currentUrl} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={formattedOgImage} />
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:locale" content="zh_CN" />
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={currentUrl} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={formattedOgImage} />
+
+<!-- Favicon & Theme -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="theme-color" content={SITE.themeColor} />
+<meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+
+<!-- Schema.org Structured Data -->
+<script type="application/ld+json" set:html={JSON.stringify(baseSchema)}></script>

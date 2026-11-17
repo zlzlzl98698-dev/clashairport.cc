@@ -1,0 +1,192 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/common/Breadcrumb.astro';
+
+const breadcrumbs = [
+  { title: '资源与情报', href: '/resources/' },
+  { title: '评测方法论白皮书', href: '/resources/methodology/' },
+];
+
+const scoringPillars = [
+  {
+    title: '1. 网络吞吐与真实延迟 (权重 30%)',
+    metrics: [
+      { name: '晚高峰千兆带宽跑满率', desc: '在晚上 20:00 - 23:00 黄金拥堵时段，使用电信/联通千兆宽带执行多线程测速，测试节点能否突破 500Mbps - 1000Mbps。' },
+      { name: 'TCP/ICMP 往返时延 (RTT)', desc: '测试香港近端节点延迟是否稳定在 20ms - 45ms，日本节点是否稳定在 40ms - 65ms，杜绝假专线公网中继的高延迟。' },
+      { name: '链路抖动 (Jitter) 与丢包率', desc: '持续 1000 次 ICMP 探针发包，丢包率须低于 0.5%，抖动须低于 5ms。' },
+    ],
+  },
+  {
+    title: '2. 敏感时期稳定性与抗封锁能力 (权重 30%)',
+    metrics: [
+      { name: '物理内网专线合规性', desc: '核验是否真正具备企业级 IEPL/IPLC 跨境陆缆或海缆通道，无须经过 GFW 深度包检测 (DPI)。' },
+      { name: '前沿抗封锁协议支持', desc: '考察对 VLESS Reality、Shadowsocks 2022、Hysteria 2、TUIC 等新一代抗审查协议的支持与多入口容灾调度能力。' },
+      { name: '敏感期 SLA 可用率', desc: '在重大网络封锁高峰期，节点整体在线率是否维持在 98.5% 以上，是否有备用域名与自动化订阅更新推送。' },
+    ],
+  },
+  {
+    title: '3. 流媒体与 AI 原生 IP 解锁能力 (权重 20%)',
+    metrics: [
+      { name: '流媒体非自制剧解锁', desc: '实测 Netflix、Disney+、YouTube Premium、HBO Max 的原生解锁状态，杜绝仅能观看自制剧的“半解锁”现象。' },
+      { name: 'ChatGPT / Claude 商业 IP 纯净度', desc: '通过 IP 欺诈度核查（Fraud Score < 25），测试是否原生支持 ChatGPT iOS App、Web 登录与 Claude 账号注册，无 Cloudflare 频繁人机验证。' },
+      { name: '原生家庭宽带/商宽住宅 IP (Residential IP)', desc: '抽查主力流媒体节点是否配备原生住宅 IP 或高质量机房广播 IP。' },
+    ],
+  },
+  {
+    title: '4. 资费性价比、透明度与安全风控 (权重 20%)',
+    metrics: [
+      { name: '单位带宽综合成本 (元/GB)', desc: '按实际月可用流量折算每 GB 真实单价，排查超低价陷阱与暗调倍率套路。' },
+      { name: '节点计费倍率透明度', desc: '所有主力节点是否维持 1.0x 正常倍率，是否存在 3.0x - 5.0x 隐藏高倍率偷跑流量。' },
+      { name: '月付友好度与跑路风险等级', desc: '是否提供低门槛月付周期；是否支持退款保障；运营年限与社群活跃度核验。' },
+    ],
+  },
+];
+
+const testingSteps = [
+  { step: '第 1 步', title: '基准环境校准', desc: '测试机接入中国电信 1000M FTTH 独立光纤，关闭本地代理，校准基准公网延迟与带宽。' },
+  { step: '第 2 步', title: '订阅导入与全节点握手', desc: '将品牌订阅导入 Clash Verge Rev (Mihomo 内核)，执行全节点批量 TCP Ping 与 URL-Test 握手延迟测试。' },
+  { step: '第 3 步', title: '24小时链路轮询监控', desc: '自动化探针脚本每隔 15 分钟向香港、日本、新加坡、美国节点发起并发探测，记录丢包与延迟波动曲线。' },
+  { step: '第 4 步', title: '极限码率流媒体压测', desc: '连接指定节点连续播放 YouTube 4K 60FPS 与 8K HDR 测试视频，统计初始缓冲时间 (Buffer Health) 与掉帧率。' },
+  { step: '第 5 步', title: 'IP 纯净度与黑名单扫描', desc: '调用 IPQualityScore 与 Scamalytics API，扫描出站节点 IP 欺诈分、邮件黑名单及流媒体分流指纹。' },
+];
+---
+
+<BaseLayout
+  title="网络代理与专线机场评测方法论白皮书 (2026标准) - clash机机"
+  description="详尽公开clash机机实验室的4维评测体系：网络吞吐与延迟(30%)、晚高峰稳定性与抗封锁(30%)、流媒体与AI原生解锁(20%)、资费透明度与防跑路(20%)。"
+  canonical="https://clashairport.cc/resources/methodology/"
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Hero Header -->
+    <header class="card-base p-8 sm:p-12 bg-gradient-to-br from-white via-surface-subtle to-emerald-50/40 border-surface-border mb-12 shadow-sm text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold mb-4">
+        <span>📋</span>
+        <span>clash机机实验室技术规范 · 2026版</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-black text-ink-title tracking-tight mb-4">
+        网络工具与专线机场评测方法论白皮书
+      </h1>
+      <p class="text-base text-ink-body max-w-2xl mx-auto leading-relaxed">
+        坚持可验证、可复现的工程测试标准。让每一项推荐都经得起晚高峰流量洪峰的检验。
+      </p>
+    </header>
+
+    <div class="space-y-12">
+      <!-- 1. 核心评测四维雷达体系 -->
+      <section class="card-base p-6 sm:p-8 bg-white border-surface-border">
+        <h2 class="text-xl font-bold text-ink-title mb-2 flex items-center gap-2">
+          <span>🎯</span>
+          <span>四维量化评测体系与权重分配</span>
+        </h2>
+        <p class="text-xs text-ink-muted mb-8 leading-relaxed">
+          我们摒弃纯主观的“好用”、“飞快”等模糊词汇，采用严格的四维百分制量化打分模型：
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {scoringPillars.map((pillar) => (
+            <div class="card-base p-5 bg-surface-subtle border-surface-border flex flex-col justify-between">
+              <div>
+                <h3 class="text-sm font-bold text-ink-title mb-3 pb-2 border-b border-surface-border flex items-center justify-between">
+                  <span>{pillar.title}</span>
+                </h3>
+                <div class="space-y-3">
+                  {pillar.metrics.map((m) => (
+                    <div class="text-xs">
+                      <strong class="text-ink-body font-semibold block mb-0.5">• {m.name}</strong>
+                      <p class="text-ink-muted leading-relaxed">{m.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- 2. 标准化 5 步真机拔测作业流程 (SOP) -->
+      <section class="card-base p-6 sm:p-8 bg-white border-surface-border">
+        <h2 class="text-xl font-bold text-ink-title mb-2 flex items-center gap-2">
+          <span>⚙️</span>
+          <span>标准化 5 步真机拔测作业流程 (SOP)</span>
+        </h2>
+        <p class="text-xs text-ink-muted mb-6 leading-relaxed">
+          每一个被收录至 41 家品牌数据库的服务商，在发布独立报告前均严格经历以下测试流程：
+        </p>
+
+        <div class="space-y-4">
+          {testingSteps.map((s, idx) => (
+            <div class="flex items-start gap-4 p-4 rounded-xl bg-surface-subtle border border-surface-border">
+              <span class="px-2.5 py-1 rounded-lg bg-brand-600 text-white font-mono text-xs font-bold flex-shrink-0">
+                {s.step}
+              </span>
+              <div>
+                <h4 class="text-sm font-bold text-ink-title mb-1">{s.title}</h4>
+                <p class="text-xs text-ink-body leading-relaxed">{s.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- 3. 防跑路红黄绿安全风险评级标准 -->
+      <section class="card-base p-6 sm:p-8 bg-white border-surface-border">
+        <h2 class="text-xl font-bold text-ink-title mb-4 flex items-center gap-2">
+          <span>🛡️</span>
+          <span>防跑路红黄绿风控预警评级规则</span>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+            <div class="flex items-center gap-2 font-bold text-emerald-800 text-sm mb-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+              <span>绿标安全级 (Low Risk)</span>
+            </div>
+            <p class="text-emerald-900 leading-relaxed">
+              运营时间 &gt; 3年，具备企业级正规专线接入，支持月付/季付灵活选购，群组活跃且具备工单即时响应机制。
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+            <div class="flex items-center gap-2 font-bold text-amber-800 text-sm mb-2">
+              <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+              <span>黄标关注级 (Medium Risk)</span>
+            </div>
+            <p class="text-amber-900 leading-relaxed">
+              新成立 6-12 个月，或近期发生过线路迁移与价格大幅调整，推荐仅以月付小额测试，不宜直接按年订购。
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-rose-50 border border-rose-200">
+            <div class="flex items-center gap-2 font-bold text-rose-800 text-sm mb-2">
+              <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+              <span>红标高危级 (High Risk)</span>
+            </div>
+            <p class="text-rose-900 leading-relaxed">
+              仅支持年付/永久套餐、长期失联、多次出现长时间断联且无官方解释，本站将直接予以跑路预警下架处理。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 周期性数据复测与更新机制 -->
+      <section class="card-base p-6 sm:p-8 bg-white border-surface-border">
+        <h2 class="text-xl font-bold text-ink-title mb-3 flex items-center gap-2">
+          <span>🔄</span>
+          <span>周期性复测与更新机制</span>
+        </h2>
+        <div class="article-prose text-xs sm:text-sm text-ink-body space-y-2 leading-relaxed">
+          <p>
+            • <strong>季度全量复核</strong>：每季度对品牌库 41+ 品牌的套餐价格、节点倍率与流媒体解锁进行真机复测，更新评测发布时间戳。
+          </p>
+          <p>
+            • <strong>敏感期专项拔测</strong>：在国际网络波动或重大节点，启动每日高频抽测，实时更新《机场稳定性排行榜》与应急避坑指南。
+          </p>
+          <p>
+            • <strong>读者纠错快速响应</strong>：任何读者通过邮件提出的有效数据偏差或跑路线索，实验室承诺在 24 小时内核验并同步于全站。
+          </p>
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

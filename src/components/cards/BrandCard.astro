@@ -1,0 +1,128 @@
+---
+import type { Brand } from '../../data/brands';
+
+interface Props {
+  brand: Brand;
+}
+
+const { brand } = Astro.props;
+const isPrimary = brand.isPrimary;
+---
+
+<div class={`card-base flex flex-col h-full bg-white transition-all ${
+  isPrimary ? 'ring-2 ring-brand-500 shadow-card-hover border-transparent' : 'hover:border-brand-300'
+}`}>
+  
+  {isPrimary && (
+    <div class="bg-gradient-to-r from-brand-600 to-indigo-600 text-white text-[11px] font-bold px-4 py-1.5 rounded-t-[0.95rem] flex items-center justify-between">
+      <span class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        ★ 本站主推品牌 · 2020老牌专线
+      </span>
+      <span class="text-[10px] bg-white/20 px-2 py-0.2 rounded-full">综合评分 9.8</span>
+    </div>
+  )}
+
+  <div class="p-5 flex flex-col flex-grow">
+    <!-- Header: Logo + Name + Operation -->
+    <div class="flex items-start justify-between gap-3 mb-3">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-surface-subtle border border-surface-border p-1.5 flex items-center justify-center overflow-hidden flex-shrink-0">
+          {brand.logo ? (
+            <img src={brand.logo} alt={`${brand.name} 品牌测评 Logo`} width="48" height="48" class="w-full h-full object-contain" loading="lazy" />
+          ) : (
+            <span class="text-base font-bold text-brand-600">{brand.name.substring(0, 2)}</span>
+          )}
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-ink-title flex items-center gap-1.5">
+            <a href={`/brands/${brand.id}/`} class="hover:text-brand-600 transition-colors">
+              {brand.name}
+            </a>
+            {brand.nameEn && <span class="text-xs font-normal text-ink-muted">({brand.nameEn})</span>}
+          </h3>
+          <p class="text-xs text-ink-muted flex items-center gap-2 mt-0.5">
+            <span>{brand.operationStart || '开业时间待核实'}</span>
+            <span>•</span>
+            <span class="text-emerald-700 font-medium">晚高峰实测保障</span>
+          </p>
+        </div>
+      </div>
+      
+      <!-- Price Pill -->
+      <div class="text-right flex-shrink-0">
+        <span class="text-xs font-bold text-brand-600 block">
+          {brand.priceDisplay.split(' ')[0]}
+        </span>
+        <span class="text-[10px] text-ink-muted block">起步价</span>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <p class="text-xs text-ink-body leading-relaxed mb-4 line-clamp-2">
+      {brand.summary}
+    </p>
+
+    <!-- Specs Matrix (Lines, Protocols, Speed) -->
+    <div class="bg-surface-subtle rounded-xl p-3 mb-4 space-y-2 text-xs border border-surface-border/60">
+      <div class="flex items-center justify-between">
+        <span class="text-ink-muted">核心线路:</span>
+        <div class="flex gap-1 flex-wrap justify-end">
+          {brand.lines.slice(0, 2).map((line) => (
+            <span class="px-1.5 py-0.5 rounded bg-white text-ink-title font-medium text-[11px] border border-surface-border">
+              {line}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <span class="text-ink-muted">实测带宽:</span>
+        <span class="font-mono font-semibold text-brand-600 text-[11px]">
+          {brand.speedtest.hasSpeedtest ? brand.speedtest.testedSpeed : '节点拔测中'}
+        </span>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <span class="text-ink-muted">协议支持:</span>
+        <span class="font-mono text-ink-title text-[11px]">
+          {brand.protocols.slice(0, 3).join(', ')}
+        </span>
+      </div>
+    </div>
+
+    <!-- Tags (AI & Streaming) -->
+    <div class="flex flex-wrap gap-1.5 mb-5 mt-auto">
+      <span class="px-2 py-0.5 rounded-md text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+        AI 解锁: {brand.aiUnlockSummary.substring(0, 12)}
+      </span>
+      <span class="px-2 py-0.5 rounded-md text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-200">
+        流媒体: {brand.streamingUnlockSummary.substring(0, 12)}
+      </span>
+    </div>
+
+    <!-- Actions (Dual CTA) -->
+    <div class="grid grid-cols-2 gap-2 pt-3 border-t border-surface-border">
+      <a
+        href={`/brands/${brand.id}/`}
+        class="text-center py-2 px-3 text-xs font-semibold rounded-lg bg-surface-subtle hover:bg-surface-hover text-ink-title border border-surface-border transition-colors"
+      >
+        详细测评
+      </a>
+      {brand.affUrl ? (
+        <a
+          href={brand.affUrl}
+          target="_blank"
+          rel="nofollow sponsored noopener"
+          class="text-center py-2 px-3 text-xs font-bold rounded-lg bg-brand-600 hover:bg-brand-700 text-white shadow-sm transition-all"
+        >
+          直达官网 →
+        </a>
+      ) : (
+        <span class="text-center py-2 px-3 text-xs font-medium rounded-lg bg-surface-subtle text-ink-muted border border-surface-border cursor-not-allowed">
+          官方维护中
+        </span>
+      )}
+    </div>
+  </div>
+</div>

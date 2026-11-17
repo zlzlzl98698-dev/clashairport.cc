@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Explicit Search Engine Crawlers Authorization
+User-agent: Googlebot
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: yisouspider
+Allow: /
+
+Sitemap: https://clashairport.cc/sitemap.xml
+Sitemap: https://clashairport.cc/sitemap-index.xml

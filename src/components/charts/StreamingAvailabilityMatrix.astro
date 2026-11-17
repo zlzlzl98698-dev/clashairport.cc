@@ -1,0 +1,100 @@
+---
+import type { StreamingStatus } from '../../data/brands';
+
+interface Props {
+  brandName?: string;
+  streamingDetails?: StreamingStatus;
+  testNode?: string;
+}
+
+const {
+  brandName = '光速云',
+  streamingDetails = {
+    chatgpt: 'partial',
+    claude: 'supported',
+    gemini: 'partial',
+    netflix: 'supported',
+    disney: 'supported',
+    youtube: 'supported',
+    hbo: 'supported',
+    tiktok: 'supported',
+    spotify: 'supported',
+  },
+  testNode = '香港 01 IEPL 企业专线 / RegionRestrictionCheck 权威拔测',
+} = Astro.props;
+
+interface ServiceItem {
+  id: keyof StreamingStatus;
+  name: string;
+  category: 'AI 生产力工具' | '海外流媒体与影音';
+  desc: string;
+}
+
+const services: ServiceItem[] = [
+  { id: 'chatgpt', name: 'ChatGPT 4o', category: 'AI 生产力工具', desc: '原生 IP 解锁，部分节点需换' },
+  { id: 'claude', name: 'Claude 3.5 Sonnet', category: 'AI 生产力工具', desc: '无需降级，原生支持' },
+  { id: 'gemini', name: 'Google Gemini', category: 'AI 生产力工具', desc: '视节点区域与 IP 信誉而定' },
+  { id: 'netflix', name: 'Netflix', category: '海外流媒体与影音', desc: '全区非自制剧秒开 4K' },
+  { id: 'disney', name: 'Disney+', category: '海外流媒体与影音', desc: '全区高清解锁不转圈' },
+  { id: 'youtube', name: 'YouTube Premium', category: '海外流媒体与影音', desc: '4K/8K 码率稳定跑满' },
+  { id: 'hbo', name: 'HBO Max', category: '海外流媒体与影音', desc: '美区/港区原生解锁' },
+  { id: 'tiktok', name: 'TikTok', category: '海外流媒体与影音', desc: '跨境免拔卡直播推流' },
+  { id: 'spotify', name: 'Spotify', category: '海外流媒体与影音', desc: '全区音乐免代理畅听' },
+];
+
+function getBadge(status: string) {
+  switch (status) {
+    case 'supported':
+      return { text: '实测支持', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30', icon: '✅' };
+    case 'partial':
+      return { text: '部分节点', color: 'bg-amber-500/10 text-amber-400 border-amber-500/30', icon: '⚠️' };
+    case 'unsupported':
+      return { text: '暂不支持', color: 'bg-rose-500/10 text-rose-400 border-rose-500/30', icon: '❌' };
+    default:
+      return { text: '尚未测试', color: 'bg-slate-500/10 text-slate-400 border-slate-500/30', icon: '⏳' };
+  }
+}
+---
+
+<div class="my-8 rounded-2xl bg-slate-900 border border-slate-800 text-slate-100 overflow-hidden shadow-elevated">
+  <!-- Header -->
+  <div class="px-6 py-4 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+    <div>
+      <h4 class="text-sm font-bold text-white tracking-wide flex items-center gap-2">
+        <span>🎬 {brandName} 流媒体与 AI 解锁矩阵 (Service Availability Matrix)</span>
+      </h4>
+      <p class="text-xs text-slate-400 mt-0.5">测试节点: {testNode}</p>
+    </div>
+    <div class="flex items-center gap-2 text-[11px] font-mono">
+      <span class="inline-flex items-center gap-1 text-emerald-400">✅ 实测全解</span>
+      <span class="inline-flex items-center gap-1 text-amber-400">⚠️ 部分需切</span>
+      <span class="inline-flex items-center gap-1 text-rose-400">❌ 不可用</span>
+    </div>
+  </div>
+
+  <!-- Matrix Grid -->
+  <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+    {services.map((svc) => {
+      const statusKey = streamingDetails[svc.id] || 'untested';
+      const badge = getBadge(statusKey);
+      return (
+        <div class="bg-slate-800/60 rounded-xl p-4 border border-slate-700/60 hover:border-slate-600 transition-colors">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-100">{svc.name}</span>
+            <span class={`text-[11px] font-mono px-2 py-0.5 rounded border ${badge.color}`}>
+              {badge.icon} {badge.text}
+            </span>
+          </div>
+          <div class="text-[11px] text-slate-400 mb-1">{svc.category}</div>
+          <div class="text-xs text-slate-300 font-mono">{svc.desc}</div>
+        </div>
+      );
+    })}
+  </div>
+
+  <!-- Footer note -->
+  <div class="px-6 py-3 bg-slate-950/90 border-t border-slate-800 text-xs text-slate-400 flex items-center justify-between">
+    <span>注：流媒体与 AI 防御策略动态更新，建议连接当地原生住宅 IP 节点以获取最优体验。</span>
+    <span class="text-slate-500 font-mono">[clash机机实验室]</span>
+  </div>
+</div>

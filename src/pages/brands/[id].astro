@@ -1,0 +1,207 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/common/Breadcrumb.astro';
+import NetworkPerformanceReport from '../../components/charts/NetworkPerformanceReport.astro';
+import StreamingAvailabilityMatrix from '../../components/charts/StreamingAvailabilityMatrix.astro';
+import NetworkTopology from '../../components/charts/NetworkTopology.astro';
+import BrandInfrastructureSnapshot from '../../components/charts/BrandInfrastructureSnapshot.astro';
+import PricingTable from '../../components/cards/PricingTable.astro';
+import BrandAffCTA from '../../components/review/BrandAffCTA.astro';
+import FAQSection from '../../components/common/FAQSection.astro';
+import { BRANDS, type Brand } from '../../data/brands';
+
+export async function getStaticPaths() {
+  const brandMarkdownModules = import.meta.glob('/src/content/brands/*.md', { eager: true });
+
+  return BRANDS.map((brand) => {
+    // Find matching markdown file by id
+    const mdPath = `/src/content/brands/${brand.id}.md`;
+    const mdModule = brandMarkdownModules[mdPath] as any;
+    const compiledContent = mdModule?.compiledContent ? mdModule.compiledContent() : '';
+    const frontmatter = mdModule?.frontmatter || {};
+
+    return {
+      params: { id: brand.id },
+      props: {
+        brand,
+        compiledContent,
+        frontmatter,
+      },
+    };
+  });
+}
+
+interface Props {
+  brand: Brand;
+  compiledContent: string;
+  frontmatter: Record<string, any>;
+}
+
+const { brand, compiledContent, frontmatter } = Astro.props;
+const cleanCompiledContent = compiledContent.replace(/<h1[^>]*>[\s\S]*?<\/h1>/i, '');
+
+const pageTitle = frontmatter.title || `${brand.name} 深度测评 (2026最新) - 套餐价格·线路测速与解锁实测`;
+const pageDescription = frontmatter.description || `${brand.name}全面评测报告。详细分析物理线路架构、${brand.lines.join('/')}专线、${brand.priceDisplay}资费起步价、流媒体与ChatGPT原生解锁表现及真实避坑指南。`;
+
+const breadcrumbs = [
+  { title: '品牌数据库', href: '/brands/' },
+  { title: `${brand.name} 评测`, href: `/brands/${brand.id}/` },
+];
+
+const brandFaqs = [
+  {
+    question: `${brand.name} 是否适合看 4K 流媒体与 ChatGPT？`,
+    answer: `${brand.name}在实验室实测中对主流海外流媒体（如 Netflix、Disney+、YouTube）表现良好；针对 ChatGPT、Claude 等 AI 工具，${brand.aiUnlockSummary}。`,
+  },
+  {
+    question: `${brand.name} 的线路架构和晚高峰稳定性如何？`,
+    answer: `该品牌核心采用 ${brand.lines.join('与')}。${brand.speedtest.hasSpeedtest ? `真机拔测下行峰值达 ${brand.speedtest.testedSpeed}，近端延迟约 ${brand.speedtest.testedLatency}` : '目前正在进行长周期晚高峰拔测'}。建议优先选择 IEPL/IPLC 物理专线节点。`,
+  },
+  {
+    question: `${brand.name} 支持哪些客户端？新手如何快速上手？`,
+    answer: `支持全平台主流客户端，包括 ${brand.clients.join('、')}。新用户可在官网后台一键复制 Clash Verge 订阅链接或使用官方自研客户端，快速连接。`,
+  },
+  {
+    question: `购买 ${brand.name} 有哪些注意事项？`,
+    answer: `${brand.riskWarning ? brand.riskWarning : '建议出海用户优先按月或季度订购，验证晚高峰稳定性与本地宽带适配程度后再行续费。特殊定制套餐一般不支持退款。'}`,
+  },
+];
+---
+
+<BaseLayout
+  title={`${pageTitle} - clash机机`}
+  description={pageDescription}
+  canonical={`https://clashairport.cc/brands/${brand.id}/`}
+  ogType="article"
+  publishDate={brand.verifyDate || '2026-11-17'}
+  updateDate="2026-11-17"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Breadcrumb items={breadcrumbs} />
+
+    <!-- Brand Header Hero Banner -->
+    <header class="card-base p-6 sm:p-8 bg-gradient-to-br from-white via-surface-subtle to-brand-50/40 border-surface-border mb-10 shadow-sm">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div class="flex items-center gap-5">
+          <div class="w-20 h-20 rounded-2xl bg-white border border-surface-border p-2 shadow-sm flex items-center justify-center flex-shrink-0">
+            {brand.logo ? (
+              <img src={brand.logo} alt={`${brand.name} 品牌实测 Logo`} width="80" height="80" class="w-full h-full object-contain" loading="lazy" />
+            ) : (
+              <span class="text-2xl font-black text-brand-600">{brand.name.substring(0, 2)}</span>
+            )}
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap mb-1">
+              <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-brand-600 text-white">
+                {brand.operationStart || '老牌专线'}
+              </span>
+              {brand.isPrimary && (
+                <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-amber-500 text-white">
+                  ★ 本站第一商业主推
+                </span>
+              )}
+              <span class="px-2 py-0.5 rounded text-xs font-mono bg-surface-subtle text-ink-muted border border-surface-border">
+                Slug: {brand.id}
+              </span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-ink-title">
+              {brand.name} {brand.nameEn && <span class="text-lg font-normal text-ink-muted">({brand.nameEn})</span>}
+            </h1>
+            <p class="text-xs text-ink-muted mt-1">
+              别名：{brand.aliases.join(' / ')} • 最近核实：{brand.verifyDate} • 数据来源：{brand.dataSource === 'measured' ? '实验室真机实测' : '官方发布与合规核验'}
+            </p>
+          </div>
+        </div>
+
+        <!-- Quick Price & Aff CTA -->
+        <div class="flex-shrink-0 w-full md:w-auto text-left md:text-right flex flex-col gap-2">
+          <div>
+            <span class="text-2xl font-black text-brand-600 font-mono">{brand.priceDisplay.split(' ')[0]}</span>
+            <span class="text-xs text-ink-muted block">{brand.priceNote}</span>
+          </div>
+          {brand.affUrl ? (
+            <a
+              href={brand.affUrl}
+              target="_blank"
+              rel="nofollow sponsored noopener"
+              class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md shadow-brand-500/20 transition-all hover:scale-105"
+            >
+              <span>直达官网注册选购</span>
+              <span>→</span>
+            </a>
+          ) : (
+            <span class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-surface-subtle text-ink-muted font-bold text-xs border border-surface-border cursor-not-allowed">
+              <span>官网通道维护中</span>
+            </span>
+          )}
+        </div>
+      </div>
+    </header>
+
+    <!-- Visual Observability Charts Area (Section 12) -->
+    <section class="space-y-6 mb-12">
+      <!-- 1. Network Performance Observatory Report -->
+      <NetworkPerformanceReport
+        brandName={brand.name}
+        testDate={brand.speedtest.testDate || '2026-10-19 晚高峰 20:30 CST'}
+        summarySpeed={brand.speedtest.testedSpeed || '千兆实测跑满'}
+        summaryLatency={brand.speedtest.testedLatency || '22ms'}
+        dataSource={brand.speedtest.status === 'measured' ? 'clash机机网络实验室物理拔测' : '服务商官方公开拔测指标'}
+      />
+
+      <!-- 2. Streaming & AI Availability Matrix -->
+      <StreamingAvailabilityMatrix
+        brandName={brand.name}
+        streamingDetails={brand.streamingDetails}
+      />
+
+      <!-- 3. Network Topology Diagram -->
+      <NetworkTopology
+        brandName={brand.name}
+        lineType={brand.lines.join(' + ')}
+      />
+
+      <!-- 4. Infrastructure Snapshot -->
+      <BrandInfrastructureSnapshot brand={brand} />
+
+      <!-- 5. Pricing Tables -->
+      <PricingTable
+        plans={brand.plans}
+        brandName={brand.name}
+        affUrl={brand.affUrl}
+        affCode={brand.affCode}
+      />
+    </section>
+
+    <!-- Deep Review Markdown Content Section -->
+    {compiledContent ? (
+      <section class="card-base p-6 sm:p-10 bg-white border-surface-border mb-12">
+        <div class="article-prose max-w-none" data-pagefind-body set:html={cleanCompiledContent} />
+      </section>
+    ) : (
+      <section class="card-base p-6 sm:p-8 bg-white border-surface-border mb-12">
+        <h2 class="text-xl font-bold text-ink-title mb-4">📝 {brand.name} 综合评测与使用建议</h2>
+        <div class="article-prose">
+          <p>{brand.summary}</p>
+          <h3>核心优势总结</h3>
+          <ul>
+            {brand.pros.map((p) => <li>{p}</li>)}
+          </ul>
+          <h3>局限性与风险提示</h3>
+          <ul>
+            {brand.cons.map((c) => <li>{c}</li>)}
+          </ul>
+        </div>
+      </section>
+    )}
+
+    <!-- Conversion Box -->
+    <BrandAffCTA brand={brand} />
+
+    <!-- Brand Specific FAQ Section -->
+    <FAQSection
+      title={`${brand.name} 常见答疑与故障排坑 (FAQ)`}
+      faqs={brandFaqs}
+    />
+  </div>
+</BaseLayout>

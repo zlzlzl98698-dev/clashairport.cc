@@ -1,0 +1,165 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import { MAIN_NAVIGATION } from '../data/navigation';
+import { BRANDS } from '../data/brands';
+import { getPrimaryBrand, getArticlesBySubtopic, getArticlesByPillar } from '../utils/content';
+
+export async function getStaticPaths() {
+  const markdownFiles = import.meta.glob('/src/content/**/*.md', { eager: true });
+  const paths = [];
+
+  for (const [filePath, mod] of Object.entries(markdownFiles)) {
+    const rel = filePath.replace(/^\/src\/content\//, '');
+    if (rel.startsWith('brands/')) continue;
+    if (rel === 'index.md' || rel === '404.md') continue;
+
+    let cleanSlug = rel.replace(/\.md$/, '');
+    if (cleanSlug.endsWith('/index')) {
+      cleanSlug = cleanSlug.replace(/\/index$/, '');
+    }
+
+    const rawMod = mod as any;
+    const frontmatter = rawMod.frontmatter || {};
+    const compiledContent = rawMod.compiledContent ? rawMod.compiledContent() : '';
+
+    paths.push({
+      params: { slug: cleanSlug },
+      props: {
+        frontmatter,
+        compiledContent,
+        relPath: rel,
+        cleanSlug,
+      },
+    });
+  }
+
+  return paths;
+}
+
+interface Props {
+  frontmatter: Record<string, any>;
+  compiledContent: string;
+  relPath: string;
+  cleanSlug: string;
+}
+
+const { frontmatter, compiledContent, relPath, cleanSlug } = Astro.props;
+
+// Parse slug hierarchy
+const parts = cleanSlug.split('/');
+const pillarSlug = parts[0];
+const subtopicSlug = parts[1];
+const isPillarPage = parts.length === 1;
+const isSubtopicPage = parts.length === 2;
+const isClusterArticle = parts.length >= 3;
+
+// Find navigation titles
+const navSection = MAIN_NAVIGATION.find((s) => s.slug === pillarSlug);
+const subItem = navSection?.subItems.find((sub) => sub.slug === subtopicSlug);
+
+// Build breadcrumbs
+const breadcrumbs = [];
+if (navSection) {
+  breadcrumbs.push({
+    title: navSection.title,
+    href: navSection.href,
+  });
+}
+if (subItem) {
+  breadcrumbs.push({
+    title: subItem.title,
+    href: subItem.href,
+  });
+}
+if (isClusterArticle) {
+  breadcrumbs.push({
+    title: frontmatter.title || '正文评测',
+    href: `/${cleanSlug}/`,
+  });
+}
+
+// Subtopic child articles
+const childArticles = isSubtopicPage ? getArticlesBySubtopic(pillarSlug, subtopicSlug) : [];
+const pillarArticles = isPillarPage ? getArticlesByPillar(pillarSlug) : [];
+const primaryBrand = getPrimaryBrand();
+
+// Ensure exactly one H1 per page for Google/Bing SEO by removing duplicate H1 from markdown body
+const cleanCompiledContent = compiledContent.replace(/<h1[^>]*>[\s\S]*?<\/h1>/i, '');
+---
+
+<ArticleLayout
+  title={frontmatter.title || '专业网络评测'}
+  description={frontmatter.description || '详细评测与配置指南'}
+  canonical={`https://clashairport.cc/${cleanSlug}/`}
+  breadcrumbs={breadcrumbs}
+  category={subItem?.title || navSection?.title || '深度测评'}
+  date={frontmatter.date || '2026-11-17'}
+  coverImage={frontmatter.cover}
+  brand={primaryBrand}
+  pageType={isClusterArticle ? 'article' : 'collection'}
+>
+  <!-- Render Compiled HTML Content from Markdown -->
+  <div set:html={cleanCompiledContent} />
+
+  <!-- If it's a Pillar Page: Render all 7 subtopics grid -->
+  {isPillarPage && navSection && (
+    <div class="mt-12 pt-8 border-t border-surface-border">
+      <h2 class="text-xl font-bold text-ink-title mb-6">🧭 {navSection.title} 核心专题全景目录</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {navSection.subItems.map((item) => (
+          <a
+            href={item.href}
+            class="card-base p-5 bg-surface-subtle hover:bg-white hover:border-brand-300 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-base font-bold text-ink-title hover:text-brand-600 transition-colors">
+                  {item.title}
+                </h3>
+                <span class="text-xs text-brand-600 font-semibold">进入专题 →</span>
+              </div>
+              <p class="text-xs text-ink-muted leading-relaxed">
+                {item.description}
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-surface-border text-[11px] text-ink-muted flex justify-between">
+              <span>独立专栏</span>
+              <span class="text-brand-600 font-semibold">查看子文章 »</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <!-- If it's a Subtopic Page: Render child cluster articles -->
+  {isSubtopicPage && childArticles.length > 0 && (
+    <div class="mt-12 pt-8 border-t border-surface-border">
+      <h2 class="text-xl font-bold text-ink-title mb-6">📖 本专题收录的核心实测文章</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {childArticles.map((art) => (
+          <a
+            href={art.url}
+            class="card-base p-5 bg-white hover:border-brand-300 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <span class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded border border-brand-200 block mb-2 w-max">
+                {subItem?.title || '核心文章'}
+              </span>
+              <h3 class="text-sm font-bold text-ink-title leading-snug mb-2 hover:text-brand-600 transition-colors">
+                {art.title}
+              </h3>
+              <p class="text-xs text-ink-muted line-clamp-3 leading-relaxed">
+                {art.description}
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-surface-border text-xs text-brand-600 font-semibold flex items-center justify-between">
+              <span>阅读长篇评测</span>
+              <span>→</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+</ArticleLayout>

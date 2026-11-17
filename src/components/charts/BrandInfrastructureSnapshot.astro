@@ -1,0 +1,95 @@
+---
+import type { Brand } from '../../data/brands';
+
+interface Props {
+  brand: Brand;
+}
+
+const { brand } = Astro.props;
+---
+
+<div class="my-8 rounded-2xl bg-white border border-surface-border p-6 shadow-sm">
+  <div class="flex items-center justify-between mb-6 pb-4 border-b border-surface-border">
+    <div>
+      <h3 class="text-base font-bold text-ink-title">⚙️ {brand.name} 基础设施与服务规格全景快照</h3>
+      <p class="text-xs text-ink-muted">包含物理线路架构、协议兼容性、区域覆盖及客户端支持矩阵</p>
+    </div>
+    <span class="text-xs font-mono font-semibold text-brand-600 bg-brand-50 px-2.5 py-1 rounded-md border border-brand-200">
+      实盘核验于 {brand.verifyDate}
+    </span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Col 1: Lines & Protocols -->
+    <div class="space-y-4">
+      <div>
+        <span class="text-xs font-semibold text-ink-muted uppercase tracking-wider block mb-1.5">核心线路架构</span>
+        <div class="flex flex-wrap gap-1.5">
+          {brand.lines.map((l) => (
+            <span class="px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+              {l}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div>
+        <span class="text-xs font-semibold text-ink-muted uppercase tracking-wider block mb-1.5">支持协议</span>
+        <div class="flex flex-wrap gap-1.5">
+          {brand.protocols.map((p) => (
+            <span class="px-2 py-0.5 rounded text-xs font-mono font-medium bg-slate-100 text-slate-700 border border-slate-200">
+              {p}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Col 2: Regions -->
+    <div class="space-y-4">
+      <div>
+        <span class="text-xs font-semibold text-ink-muted uppercase tracking-wider block mb-1.5">主要节点区域</span>
+        <div class="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
+          {brand.regions.map((r) => (
+            <span class="px-2 py-0.5 rounded text-xs bg-surface-subtle text-ink-body border border-surface-border">
+              {r}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Col 3: Clients -->
+    <div class="space-y-4">
+      <div>
+        <span class="text-xs font-semibold text-ink-muted uppercase tracking-wider block mb-1.5">客户端兼容支持</span>
+        <div class="flex flex-wrap gap-1.5">
+          {brand.clients.map((c) => (
+            <span class="px-2 py-0.5 rounded text-xs bg-emerald-50 text-emerald-700 border border-emerald-200">
+              {c}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Col 4: Pros & Warning -->
+    <div class="space-y-4">
+      <div>
+        <span class="text-xs font-semibold text-ink-muted uppercase tracking-wider block mb-1.5">推荐优势</span>
+        <ul class="text-xs space-y-1 text-emerald-700">
+          {brand.pros.slice(0, 3).map((pro) => (
+            <li class="flex items-start gap-1">
+              <span>✓</span>
+              <span>{pro}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      {brand.riskWarning && (
+        <div class="bg-amber-50 rounded-lg p-2.5 border border-amber-200 text-[11px] text-amber-800 leading-relaxed">
+          <strong>选购提示：</strong>{brand.riskWarning}
+        </div>
+      )}
+    </div>
+  </div>
+</div>

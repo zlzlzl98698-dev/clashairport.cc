@@ -1,0 +1,8 @@
+﻿实体名称,实体类型,英文标识,核心属性,关联协议,关联客户端,关联专题URL,信赖度评估
+"光速云","推荐品牌","LightSpeed","2020年运营/IEPL专线/全节点1倍率","VLESS,Shadowsocks","自研端,Clash,小火箭","/brands/lightspeed","实测已核实"
+"飞猫云","推荐品牌","FlyCat","7元低门槛/8折券/性价比高","Shadowsocks,Trojan","Clash,v2rayN,小火箭","/brands/feimao","实测已核实"
+"微风网络","推荐品牌","Breezenet","7元平价/9折优惠/轻巧稳定","Shadowsocks,VLESS","Clash,小火箭","/brands/weifeng","实测已核实"
+"二猫云","推荐品牌","2Mao","20元130GB/专线中转","Shadowsocks","Clash,v2rayN","/brands/ermao","实测已核实"
+"Clash Verge Rev","代理客户端","Clash Verge Rev","开源/Mihomo内核/TUN模式","VLESS,Hysteria2,SS","Win/Mac/Linux","/clash/verge/","官方开源"
+"Mihomo","代理内核","Clash.Meta","支持新一代抗封锁协议","VLESS,Hysteria2,TUIC","全平台","/clash/meta/","官方开源"
+"Shadowrocket","代理客户端","小火箭","iOS生态最普及工具","全协议支持","iOS/iPadOS","/vpn/mobile/","成熟商用"
